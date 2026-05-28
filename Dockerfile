@@ -1,8 +1,9 @@
 FROM node:24.13.0-slim AS deps
 WORKDIR /app
 RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
-COPY package.json pnpm-lock.yaml ./
-RUN corepack enable pnpm && pnpm install --frozen-lockfile
+COPY package.json pnpm-lock.yaml .npmrc ./
+RUN corepack enable pnpm \
+  && pnpm install --frozen-lockfile
 
 FROM node:24.13.0-slim AS builder
 WORKDIR /app
