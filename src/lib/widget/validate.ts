@@ -23,9 +23,27 @@ export function parseAllowedOrigins(json: string): string[] {
 
 export function extractOriginFromReferer(referer: string | null): string | null {
   if (!referer) return null;
+  return normalizeHttpOrigin(referer);
+}
+
+/** Rejects opaque origins (`null` string) and non-http(s) values. */
+export function normalizeHttpOrigin(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const trimmed = value.trim();
+  if (!trimmed || trimmed === "null" || trimmed === "undefined") return null;
+
   try {
-    return new URL(referer).origin;
+    const url = new URL(trimmed);
+    if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+    return url.origin;
   } catch {
+    if (/^https?:\/\//.test(trimmed)) {
+      try {
+        return new URL(trimmed.replace(/\/$/, "")).origin;
+      } catch {
+        return null;
+      }
+    }
     return null;
   }
 }
@@ -36,15 +54,12 @@ export function resolveRequestOrigin(
   refererHeader: string | null,
   embedOrigin: string | null,
 ): string | null {
-  if (originHeader && originHeader !== "null") return originHeader;
-  if (embedOrigin) {
-    try {
-      return new URL(embedOrigin).origin;
-    } catch {
-      // allow bare origin strings like https://www.example.com
-      if (/^https?:\/\//.test(embedOrigin)) return embedOrigin.replace(/\/$/, "");
-    }
-  }
+  const fromHeader = normalizeHttpOrigin(originHeader);
+  if (fromHeader) return fromHeader;
+
+  const fromEmbed = normalizeHttpOrigin(embedOrigin);
+  if (fromEmbed) return fromEmbed;
+
   return extractOriginFromReferer(refererHeader);
 }
 

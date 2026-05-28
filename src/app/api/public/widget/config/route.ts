@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { attendantConfigs } from "@/lib/db/schema";
 import {
   isOriginAllowed,
+  normalizeHttpOrigin,
   publicCorsHeaders,
   resolveRequestOrigin,
   resolveWidgetKey,
@@ -30,7 +31,7 @@ export async function GET(request: Request) {
   const origin = resolveRequestOrigin(
     request.headers.get("origin"),
     request.headers.get("referer"),
-    embedOrigin,
+    normalizeHttpOrigin(embedOrigin),
   );
 
   if (!widgetKey) {

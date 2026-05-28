@@ -89,7 +89,13 @@ export function WidgetEmbedManager({ orgId }: Props) {
   }
 
   function copySnippet(key: WidgetKeyRow) {
-    const snippet = buildWidgetSnippet(baseUrl, key.publicKey);
+    const originsList = parseAllowedOrigins(key.allowedOrigins);
+    const snippet = buildWidgetSnippet(
+      baseUrl,
+      key.publicKey,
+      "bottom-right",
+      originsList[0],
+    );
     void navigator.clipboard.writeText(snippet);
     setCopiedId(key.id);
     setTimeout(() => setCopiedId(null), 2000);
@@ -120,7 +126,12 @@ export function WidgetEmbedManager({ orgId }: Props) {
           <ul className="space-y-4 pb-2">
             {keys.map((key) => {
               const originsList = parseAllowedOrigins(key.allowedOrigins);
-              const snippet = buildWidgetSnippet(baseUrl, key.publicKey);
+              const snippet = buildWidgetSnippet(
+                baseUrl,
+                key.publicKey,
+                "bottom-right",
+                originsList[0],
+              );
               return (
                 <motion.li
                   key={key.id}

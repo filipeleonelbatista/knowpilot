@@ -12,6 +12,46 @@
     ? new URL(script.src).origin
     : window.location.origin;
 
+  function normalizeHttpOrigin(value: string | null | undefined): string | undefined {
+    if (!value) return undefined;
+    const trimmed = value.trim();
+    if (!trimmed || trimmed === "null" || trimmed === "undefined") return undefined;
+    try {
+      const url = new URL(trimmed);
+      if (url.protocol !== "http:" && url.protocol !== "https:") return undefined;
+      return url.origin;
+    } catch {
+      return undefined;
+    }
+  }
+
+  function resolveClientEmbedOrigin(): string | undefined {
+    const fromAttr = normalizeHttpOrigin(script?.getAttribute("data-embed-origin"));
+    if (fromAttr) return fromAttr;
+
+    if (document.referrer) {
+      try {
+        const fromReferrer = normalizeHttpOrigin(new URL(document.referrer).origin);
+        if (fromReferrer) return fromReferrer;
+      } catch {
+        // ignore invalid referrer
+      }
+    }
+
+    try {
+      if (window.parent !== window) {
+        const fromParent = normalizeHttpOrigin(window.parent.location.origin);
+        if (fromParent) return fromParent;
+      }
+    } catch {
+      // cross-origin parent
+    }
+
+    return normalizeHttpOrigin(window.location.origin);
+  }
+
+  const embedOrigin = resolveClientEmbedOrigin();
+
   const host = document.createElement("div");
   host.id = "kb-chat-widget-host";
   document.body.appendChild(host);
@@ -155,13 +195,12 @@
     return el;
   }
 
-  const embedOrigin = window.location.origin;
-
   async function loadConfig() {
     try {
-      const res = await fetch(
-        `${baseUrl}/api/public/widget/config?key=${encodeURIComponent(widgetKey)}&embedOrigin=${encodeURIComponent(embedOrigin)}`,
-      );
+      const configUrl = new URL(`${baseUrl}/api/public/widget/config`);
+      configUrl.searchParams.set("key", widgetKey);
+      if (embedOrigin) configUrl.searchParams.set("embedOrigin", embedOrigin);
+      const res = await fetch(configUrl.toString());
       if (res.ok) {
         const data = (await res.json()) as {
           name?: string;
@@ -189,10 +228,16 @@
     let reply = "";
 
     try {
+      const payload: { message: string; widgetKey: string; embedOrigin?: string } = {
+        message: text,
+        widgetKey,
+      };
+      if (embedOrigin) payload.embedOrigin = embedOrigin;
+
       const res = await fetch(`${baseUrl}/api/public/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, widgetKey, embedOrigin }),
+        body: JSON.stringify(payload),
       });
 
       const reader = res.body?.getReader();

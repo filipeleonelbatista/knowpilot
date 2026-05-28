@@ -4,6 +4,7 @@ import { checkOllamaHealth } from "@/lib/ollama/client";
 import { runRagChat } from "@/lib/rag/chat";
 import {
   isOriginAllowed,
+  normalizeHttpOrigin,
   publicCorsHeaders,
   resolveRequestOrigin,
   resolveWidgetKey,
@@ -13,7 +14,7 @@ import { z } from "zod";
 const schema = z.object({
   message: z.string().min(1).max(4000),
   widgetKey: z.string().min(1),
-  embedOrigin: z.string().url().optional(),
+  embedOrigin: z.string().optional(),
 });
 
 function withCors(
@@ -46,7 +47,7 @@ export async function POST(request: Request) {
   const origin = resolveRequestOrigin(
     request.headers.get("origin"),
     request.headers.get("referer"),
-    body.embedOrigin ?? null,
+    normalizeHttpOrigin(body.embedOrigin) ?? null,
   );
 
   const ctx = await resolveWidgetKey(body.widgetKey);
