@@ -14,6 +14,8 @@ export type SeedOrgDefinition = {
     characteristics: string;
     extraInstructions: string;
     fallbackMessage: string;
+    fallbackEmail?: string;
+    fallbackPhone?: string;
     widgetPrimaryColor: string;
   };
   documents: SeedDocument[];

@@ -72,7 +72,13 @@ export default function AttendantSettingsPage() {
   }, [slug]);
 
   function selectPreset(preset: AttendantPreset) {
-    setForm((current) => applyPreset(current, preset));
+    setForm((current) => ({
+      ...applyPreset(current, preset),
+      fallbackMessage: current.fallbackMessage,
+      fallbackEmail: current.fallbackEmail,
+      fallbackPhone: current.fallbackPhone,
+      widgetPrimaryColor: current.widgetPrimaryColor,
+    }));
   }
 
   async function save() {
