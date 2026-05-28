@@ -1,0 +1,12 @@
+---
+description: RAG and attendant guardrails
+globs: src/lib/rag/**/*
+alwaysApply: false
+---
+
+# RAG Guardrails
+
+- Answers ONLY from retrieved KB chunks
+- Below similarity threshold → fallback message + human contact
+- Never invent pricing or policies
+- System prompt template: `docs/ai/system-prompt-template.md`

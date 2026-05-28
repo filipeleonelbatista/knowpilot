@@ -1,0 +1,1 @@
+ALTER TABLE `widget_keys` ADD `label` text;

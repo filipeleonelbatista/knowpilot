@@ -1,0 +1,12 @@
+---
+description: Clean code standards
+globs: src/**/*
+alwaysApply: true
+---
+
+# Clean Code
+
+- Thin route handlers; business logic in `src/lib/`
+- Zod for API input validation
+- One responsibility per file
+- Match existing naming and patterns

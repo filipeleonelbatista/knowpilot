@@ -1,36 +1,117 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# KB Chat — Base de Conhecimento + Ollama
 
-## Getting Started
+SaaS para gerenciar base de conhecimento, configurar atendente IA (Ollama local) e publicar widget de chat embeddable. Respostas **somente** com RAG sobre a KB.
 
-First, run the development server:
+MIT License — for study purposes.
+
+## Features
+
+- Cadastro/login multi-organização (Auth.js)
+- CRUD de documentos com indexação vetorial (embeddings Ollama)
+- Configuração do atendente (nome, personalidade, fallback humano)
+- Widget JS + Shadow DOM (`/widget/v1.js`)
+- Fila de inferência com limites Free/Pro
+- LP Plano Pro (R$ 90) + captura de leads (sem checkout)
+
+## Requisitos
+
+- Node 20+
+- pnpm 10+
+- Ollama (local ou Docker)
+
+## Desenvolvimento
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+cp .env.example .env.local
+# Edite AUTH_SECRET (openssl rand -base64 32)
+
+pnpm install
+# Build native module if needed:
+# cd node_modules/.pnpm/better-sqlite3@*/node_modules/better-sqlite3 && npm run build-release
+
+pnpm db:migrate
+pnpm db:seed          # demo user + 3 orgs (25 docs each); indexes via Ollama if up
+pnpm db:seed:fast     # same without embeddings (use db:seed:index later)
+pnpm db:seed:index    # index seed KB after Ollama is up
+pnpm db:seed:minimal  # 2º usuário: 1 org, 5 docs, atendente configurado
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ver [Credenciais de seed](#credenciais-de-seed) abaixo.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Abra [http://localhost:3000](http://localhost:3000).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Modelos Ollama
 
-## Learn More
+No **Docker Compose**, os modelos são baixados automaticamente pelo container `ollama`.
 
-To learn more about Next.js, take a look at the following resources:
+Em dev local (Ollama instalado no host):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+./scripts/pull-models.sh
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Testes
 
-## Deploy on Vercel
+```bash
+pnpm test
+pnpm test:e2e   # requer app rodando
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deploy em VPS Ubuntu (recomendado)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Guia completo: [`docs/deploy/vps-ubuntu.md`](docs/deploy/vps-ubuntu.md)
+
+```bash
+cp .env.production.example .env   # AUTH_SECRET + AUTH_URL=https://seu-dominio
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+```
+
+Ollama baixa os modelos sozinho no primeiro `up`. Em produção a app escuta em `127.0.0.1:3000` (use Caddy/Nginx + TLS).
+
+### Coolify (alternativa)
+
+[`docs/deploy/coolify.md`](docs/deploy/coolify.md)
+
+### Capacidade (1 vCPU / 4GB RAM)
+
+| Métrica                    | Valor sustentável              |
+| -------------------------- | ------------------------------ |
+| Inferências IA simultâneas | **1** (global)                 |
+| Fila Free                  | até **3**                      |
+| Fila Pro                   | até **8** (prioridade na fila) |
+
+Pro não aumenta hardware neste MVP — prioridade na fila e limites maiores.
+
+Detalhes de swap, Caddy e firewall: [`docs/deploy/vps-ubuntu.md`](docs/deploy/vps-ubuntu.md).
+
+## Estrutura
+
+- `src/lib/rag/` — pipeline RAG
+- `src/lib/concurrency/` — fila Ollama
+- `widget/` — bundle embed
+- `docs/superpowers/plans/` — planos de implementação
+
+## Variáveis de ambiente
+
+Ver [`.env.example`](.env.example).
+
+## Credenciais de seed
+
+### Seed completo (`pnpm db:seed`)
+
+| Campo | Valor                |
+| ----- | -------------------- |
+| Email | demo@knowpilot.local |
+| Senha | demo123456           |
+| Orgs  | `petvida`, `sabor-arte`, `ironfit` (25 docs cada) |
+
+### Seed minimal (`pnpm db:seed:minimal`)
+
+| Campo | Valor                   |
+| ----- | ----------------------- |
+| Email | starter@knowpilot.local |
+| Senha | starter123456           |
+| Org   | `techstart` (5 docs, atendente **Nuve**, widget e fallback prontos) |
+
+Recriar: `pnpm db:seed:minimal:force`. Indexar depois: `SEED_USER_EMAIL=starter@knowpilot.local pnpm db:seed:index`.

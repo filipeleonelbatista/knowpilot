@@ -1,0 +1,11 @@
+# Production overlay for Ubuntu VPS:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+services:
+  ollama:
+    restart: unless-stopped
+    ports: [] # Ollama only on internal Docker network
+
+  app:
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000" # expose locally for Caddy/Nginx

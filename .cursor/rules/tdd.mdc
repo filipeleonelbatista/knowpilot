@@ -1,0 +1,11 @@
+---
+description: TDD discipline for this project
+globs: src/**/*.ts, tests/**/*.ts
+alwaysApply: false
+---
+
+# TDD
+
+- Write failing test first (RED), minimal code (GREEN), refactor
+- No production logic without a failing test first (except config/scaffold)
+- Run `pnpm test` before commits
