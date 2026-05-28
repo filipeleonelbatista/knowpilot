@@ -67,7 +67,7 @@ cp .env.production.example .env   # AUTH_SECRET + AUTH_URL=https://seu-dominio
 docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 ```
 
-Ollama baixa os modelos sozinho no primeiro `up`. Em produção a app escuta em `127.0.0.1:3000` (use Caddy/Nginx + TLS).
+Ollama baixa os modelos sozinho no primeiro `up`. Em produção a app fica em `127.0.0.1:3003` no host (porta interna do container: 3000; use Caddy/Nginx + TLS).
 
 ### Coolify (alternativa)
 

@@ -8,4 +8,4 @@ services:
   app:
     restart: unless-stopped
     ports:
-      - "127.0.0.1:3000:3000" # expose locally for Caddy/Nginx
+      - "127.0.0.1:${APP_HOST_PORT:-3003}:3000" # host 3003 → container 3000 (Caddy/Nginx)

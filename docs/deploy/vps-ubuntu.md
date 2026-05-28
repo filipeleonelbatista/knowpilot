@@ -61,7 +61,7 @@ Na **primeira vez**, o serviço `ollama` pode levar **5–15 min** puxando model
 Verificar:
 
 ```bash
-curl -s http://127.0.0.1:3000/api/health
+curl -s http://127.0.0.1:3003/api/health
 # {"status":"ok","ollama":true}
 ```
 
@@ -74,7 +74,7 @@ sudo nano /etc/caddy/Caddyfile
 
 ```caddy
 app.seudominio.com {
-    reverse_proxy 127.0.0.1:3000
+    reverse_proxy 127.0.0.1:3003
 }
 ```
 
