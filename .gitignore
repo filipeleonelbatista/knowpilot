@@ -30,3 +30,8 @@ next-env.d.ts
 
 /test-results/
 /playwright-report/
+
+# Cursor local artifacts
+.cursor/plans/
+cursor_*.md
+*.har
