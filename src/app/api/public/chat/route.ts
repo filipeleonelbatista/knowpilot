@@ -4,6 +4,8 @@ import { checkOllamaHealth } from "@/lib/ollama/client";
 import { runRagChat } from "@/lib/rag/chat";
 import {
   isOriginAllowed,
+  publicCorsHeaders,
+  resolveRequestOrigin,
   resolveWidgetKey,
 } from "@/lib/widget/validate";
 import { z } from "zod";
@@ -11,34 +13,67 @@ import { z } from "zod";
 const schema = z.object({
   message: z.string().min(1).max(4000),
   widgetKey: z.string().min(1),
+  embedOrigin: z.string().url().optional(),
 });
 
+function withCors(
+  response: Response,
+  origin: string | null,
+): Response {
+  const headers = new Headers(response.headers);
+  for (const [key, value] of Object.entries(publicCorsHeaders(origin))) {
+    headers.set(key, value);
+  }
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 export async function POST(request: Request) {
-  const origin = request.headers.get("origin");
 
   let body: z.infer<typeof schema>;
   try {
     body = schema.parse(await request.json());
   } catch {
-    return jsonError(400, "BAD_REQUEST", "Requisição inválida");
+    return withCors(
+      jsonError(400, "BAD_REQUEST", "Requisição inválida"),
+      request.headers.get("origin"),
+    );
   }
+
+  const origin = resolveRequestOrigin(
+    request.headers.get("origin"),
+    request.headers.get("referer"),
+    body.embedOrigin ?? null,
+  );
 
   const ctx = await resolveWidgetKey(body.widgetKey);
   if (!ctx) {
-    return jsonError(401, "INVALID_KEY", "Chave do widget inválida");
+    return withCors(
+      jsonError(401, "INVALID_KEY", "Chave do widget inválida"),
+      origin,
+    );
   }
 
   if (!isOriginAllowed(origin, ctx.allowedOrigins)) {
-    return jsonError(403, "ORIGIN_DENIED", "Origem não autorizada");
+    return withCors(
+      jsonError(403, "ORIGIN_DENIED", "Origem não autorizada"),
+      origin,
+    );
   }
 
   const healthy = await checkOllamaHealth();
   if (!healthy) {
-    return jsonError(
-      503,
-      "CAPACITY_EXCEEDED",
-      "Sistema sobrecarregado. Tente em 2–3 minutos.",
-      { upgradeUrl: "/upgrade" },
+    return withCors(
+      jsonError(
+        503,
+        "CAPACITY_EXCEEDED",
+        "Sistema sobrecarregado. Tente em 2–3 minutos.",
+        { upgradeUrl: "/upgrade" },
+      ),
+      origin,
     );
   }
 
@@ -107,17 +142,21 @@ export async function POST(request: Request) {
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache",
       Connection: "keep-alive",
-      "Access-Control-Allow-Origin": origin ?? "*",
+      ...publicCorsHeaders(origin),
     },
   });
 }
 
 export async function OPTIONS(request: Request) {
-  const origin = request.headers.get("origin") ?? "*";
+  const origin = resolveRequestOrigin(
+    request.headers.get("origin"),
+    request.headers.get("referer"),
+    null,
+  );
   return new Response(null, {
     status: 204,
     headers: {
-      "Access-Control-Allow-Origin": origin,
+      ...publicCorsHeaders(origin),
       "Access-Control-Allow-Methods": "POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
     },

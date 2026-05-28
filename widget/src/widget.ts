@@ -155,10 +155,12 @@
     return el;
   }
 
+  const embedOrigin = window.location.origin;
+
   async function loadConfig() {
     try {
       const res = await fetch(
-        `${baseUrl}/api/public/widget/config?key=${encodeURIComponent(widgetKey)}`,
+        `${baseUrl}/api/public/widget/config?key=${encodeURIComponent(widgetKey)}&embedOrigin=${encodeURIComponent(embedOrigin)}`,
       );
       if (res.ok) {
         const data = (await res.json()) as {
@@ -190,7 +192,7 @@
       const res = await fetch(`${baseUrl}/api/public/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, widgetKey }),
+        body: JSON.stringify({ message: text, widgetKey, embedOrigin }),
       });
 
       const reader = res.body?.getReader();

@@ -21,18 +21,49 @@ export function parseAllowedOrigins(json: string): string[] {
   return [];
 }
 
+export function extractOriginFromReferer(referer: string | null): string | null {
+  if (!referer) return null;
+  try {
+    return new URL(referer).origin;
+  } catch {
+    return null;
+  }
+}
+
+/** Resolves site origin for embed validation (CORS Origin can be "null" in iframes). */
+export function resolveRequestOrigin(
+  originHeader: string | null,
+  refererHeader: string | null,
+  embedOrigin: string | null,
+): string | null {
+  if (originHeader && originHeader !== "null") return originHeader;
+  if (embedOrigin) {
+    try {
+      return new URL(embedOrigin).origin;
+    } catch {
+      // allow bare origin strings like https://www.example.com
+      if (/^https?:\/\//.test(embedOrigin)) return embedOrigin.replace(/\/$/, "");
+    }
+  }
+  return extractOriginFromReferer(refererHeader);
+}
+
 export function isOriginAllowed(
   origin: string | null,
   allowedOrigins: string[],
 ): boolean {
   if (allowedOrigins.length === 0) return true;
   if (!origin) return false;
-  return allowedOrigins.some(
-    (allowed) =>
-      allowed === "*" ||
-      origin === allowed ||
-      origin === allowed.replace(/\/$/, ""),
-  );
+  const normalized = origin.replace(/\/$/, "");
+  return allowedOrigins.some((allowed) => {
+    const entry = allowed.replace(/\/$/, "");
+    return entry === "*" || normalized === entry;
+  });
+}
+
+export function publicCorsHeaders(origin: string | null): Record<string, string> {
+  const allowOrigin = origin && origin !== "null" ? origin : "*";
+  return { "Access-Control-Allow-Origin": allowOrigin };
 }
 
 export async function resolveWidgetKey(

@@ -4,26 +4,49 @@ import { db } from "@/lib/db";
 import { attendantConfigs } from "@/lib/db/schema";
 import {
   isOriginAllowed,
+  publicCorsHeaders,
+  resolveRequestOrigin,
   resolveWidgetKey,
 } from "@/lib/widget/validate";
 import { jsonError } from "@/lib/api/errors";
 
+function withCors(response: Response, origin: string | null): Response {
+  const headers = new Headers(response.headers);
+  for (const [key, value] of Object.entries(publicCorsHeaders(origin))) {
+    headers.set(key, value);
+  }
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const widgetKey = searchParams.get("key");
-  const origin = request.headers.get("origin");
+  const embedOrigin = searchParams.get("embedOrigin");
+
+  const origin = resolveRequestOrigin(
+    request.headers.get("origin"),
+    request.headers.get("referer"),
+    embedOrigin,
+  );
 
   if (!widgetKey) {
-    return jsonError(400, "BAD_REQUEST", "Chave obrigatória");
+    return withCors(jsonError(400, "BAD_REQUEST", "Chave obrigatória"), origin);
   }
 
   const ctx = await resolveWidgetKey(widgetKey);
   if (!ctx) {
-    return jsonError(401, "INVALID_KEY", "Chave inválida");
+    return withCors(jsonError(401, "INVALID_KEY", "Chave inválida"), origin);
   }
 
   if (!isOriginAllowed(origin, ctx.allowedOrigins)) {
-    return jsonError(403, "ORIGIN_DENIED", "Origem não autorizada");
+    return withCors(
+      jsonError(403, "ORIGIN_DENIED", "Origem não autorizada"),
+      origin,
+    );
   }
 
   const config = await db.query.attendantConfigs.findFirst({
@@ -36,9 +59,7 @@ export async function GET(request: Request) {
       primaryColor: config?.widgetPrimaryColor ?? "#2563eb",
     },
     {
-      headers: {
-        "Access-Control-Allow-Origin": origin ?? "*",
-      },
+      headers: publicCorsHeaders(origin),
     },
   );
 }
