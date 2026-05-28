@@ -3,7 +3,8 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
 COPY package.json pnpm-lock.yaml .npmrc ./
 RUN corepack enable pnpm \
-  && pnpm install --frozen-lockfile
+  && pnpm install --frozen-lockfile \
+  && pnpm rebuild better-sqlite3
 
 FROM node:24.13.0-slim AS builder
 WORKDIR /app
@@ -11,7 +12,13 @@ RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN corepack enable pnpm && pnpm build:widget && pnpm build
+# Native module for Next "collect page data" + runtime (serverExternalPackages)
+RUN corepack enable pnpm \
+  && pnpm rebuild better-sqlite3 \
+  && pnpm build:widget \
+  && pnpm build \
+  && mkdir -p /native-deps \
+  && cp -rL node_modules/better-sqlite3 /native-deps/better-sqlite3
 
 FROM node:24.13.0-slim AS runner
 WORKDIR /app
@@ -24,6 +31,7 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/drizzle ./drizzle
+COPY --from=builder /native-deps/better-sqlite3 ./node_modules/better-sqlite3
 USER node
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
