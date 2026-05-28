@@ -20,17 +20,19 @@ function LoginForm() {
     e.preventDefault();
     setError(null);
     setLoading(true);
+    const callbackUrl = params.get("callbackUrl") ?? "/dashboard";
     const res = await signIn("credentials", {
       email,
       password,
       redirect: false,
+      callbackUrl,
     });
     setLoading(false);
     if (res?.error) {
       setError("Email ou senha inválidos");
       return;
     }
-    router.push(params.get("callbackUrl") ?? "/dashboard");
+    router.push(callbackUrl);
   }
 
   return (

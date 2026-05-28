@@ -6,6 +6,8 @@ export async function middleware(request: NextRequest) {
   const token = await getToken({
     req: request,
     secret: process.env.AUTH_SECRET,
+    // HTTPS (ngrok, production) uses __Secure-authjs.session-token
+    secureCookie: request.nextUrl.protocol === "https:",
   });
 
   if (!token) {
