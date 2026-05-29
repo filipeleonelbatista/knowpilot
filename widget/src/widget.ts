@@ -12,6 +12,10 @@
     ? new URL(script.src).origin
     : window.location.origin;
 
+  const ngrokBypassHeaders = {
+    "ngrok-skip-browser-warning": "true",
+  };
+
   function normalizeHttpOrigin(value: string | null | undefined): string | undefined {
     if (!value) return undefined;
     const trimmed = value.trim();
@@ -200,7 +204,9 @@
       const configUrl = new URL(`${baseUrl}/api/public/widget/config`);
       configUrl.searchParams.set("key", widgetKey);
       if (embedOrigin) configUrl.searchParams.set("embedOrigin", embedOrigin);
-      const res = await fetch(configUrl.toString());
+      const res = await fetch(configUrl.toString(), {
+        headers: ngrokBypassHeaders,
+      });
       if (res.ok) {
         const data = (await res.json()) as {
           name?: string;
@@ -236,7 +242,10 @@
 
       const res = await fetch(`${baseUrl}/api/public/chat`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...ngrokBypassHeaders,
+        },
         body: JSON.stringify(payload),
       });
 
