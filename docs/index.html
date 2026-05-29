@@ -182,6 +182,57 @@
         grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
         gap: 1.25rem;
       }
+      .section-tint {
+        background: linear-gradient(180deg, #eef6ef 0%, var(--bg) 100%);
+      }
+      .featured-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.35rem;
+      }
+      @media (max-width: 900px) {
+        .featured-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .featured-card {
+        background: var(--card);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      .featured-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 48px rgba(45, 106, 79, 0.18);
+      }
+      .featured-card img {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        display: block;
+      }
+      .featured-card .card-body {
+        padding: 1.15rem 1.25rem 1.35rem;
+      }
+      .featured-card .card-body h3 {
+        font-size: 1.2rem;
+      }
+      .featured-card .price {
+        font-size: 1.25rem;
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        align-items: start;
+      }
+      @media (max-width: 720px) {
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
       .card {
         background: var(--card);
         border-radius: var(--radius);
@@ -238,10 +289,6 @@
       .banner .btn {
         background: #fff;
         color: var(--accent);
-      }
-      .kits-single {
-        max-width: 560px;
-        margin: 0 auto;
       }
       footer {
         background: #1b4332;
@@ -386,7 +433,11 @@
       <div class="wrap topbar">
         <div class="logo">Flor &amp; <span>Jardim</span></div>
         <nav aria-label="Principal">
-          <a href="#destaques">Destaques</a>
+          <a href="#em-destaque">Em destaque</a>
+          <a href="#destaques">Vitrine</a>
+          <a href="#interior">Interior</a>
+          <a href="#presentes">Presentes</a>
+          <a href="#vasos">Vasos</a>
           <a href="#kits">Kits</a>
           <a href="#contato">Contato</a>
         </nav>
@@ -403,18 +454,75 @@
             atendimento que responde por telefone e formulário de contato.
           </p>
           <div class="cta-row">
-            <a class="btn btn-primary" href="#destaques">Ver vitrine</a>
-            <a class="btn btn-ghost" href="#kits">Montar kit jardim</a>
+            <a class="btn btn-primary" href="#em-destaque">Ver em destaque</a>
+            <a class="btn btn-ghost" href="#destaques">Ver vitrine</a>
           </div>
         </div>
         <div class="hero-visual">
           <img
-            src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=900&q=80"
-            alt="Vaso com flores coloridas em ambiente claro"
+            src="https://commons.wikimedia.org/wiki/Special:FilePath/Rose%20and%20carnation%20flower%20bouquet%2001.jpg?width=900"
+            alt="Buquê de rosas e cravos"
             width="900"
             height="675"
             loading="eager"
           />
+        </div>
+      </div>
+    </section>
+
+    <section id="em-destaque" class="section-tint">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Produtos em destaque</h2>
+          <span class="badge">Mais pedidos</span>
+        </div>
+        <p style="color: var(--muted); max-width: 60ch; margin: -0.5rem 0 1.25rem">
+          Seleção curada com fotos estáveis (Wikimedia Commons). Ideal para vitrine estática e
+          hospedagem em GitHub Pages.
+        </p>
+        <div class="featured-grid">
+          <article class="featured-card">
+            <img
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Rose%20and%20carnation%20flower%20bouquet%2001.jpg?width=720"
+              alt="Buquê de rosas e cravos"
+              width="720"
+              height="720"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Buquê Aurora</h3>
+              <p>Rosas e cravos em tons suaves, embrulho kraft.</p>
+              <div class="price">R$ 189</div>
+            </div>
+          </article>
+          <article class="featured-card">
+            <img
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Phalaenopsis%20orchid.jpg?width=720"
+              alt="Orquídea Phalaenopsis em flor"
+              width="720"
+              height="720"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Orquídea Phalaenopsis</h3>
+              <p>Flor premium com cachepô de fibra natural.</p>
+              <div class="price">R$ 248</div>
+            </div>
+          </article>
+          <article class="featured-card">
+            <img
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Gardening_tools.jpg?width=720"
+              alt="Ferramentas de jardinagem"
+              width="720"
+              height="720"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Kit Iniciante</h3>
+              <p>Pá, regador, substrato e vasos — ideal para apartamento.</p>
+              <div class="price">R$ 134</div>
+            </div>
+          </article>
         </div>
       </div>
     </section>
@@ -428,22 +536,50 @@
         <div class="products">
           <article class="card">
             <img
-              src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80"
-              alt="Horta em caixote de madeira"
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Rose%20and%20carnation%20flower%20bouquet%2001.jpg?width=640"
+              alt="Buquê de rosas e cravos"
+              width="600"
+              height="450"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Buquê Aurora</h3>
+              <p>Rosas e cravos em tons suaves, embrulho kraft.</p>
+              <div class="price">R$ 189</div>
+            </div>
+          </article>
+          <article class="card">
+            <img
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Mexican%20Succulent%20Echeveria%20Peacockii%20(1).jpg?width=640"
+              alt="Suculentas echevéria em vasos"
+              width="600"
+              height="450"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Trio Suculenta</h3>
+              <p>Três espécies em vasos cerâmicos — pouca manutenção.</p>
+              <div class="price">R$ 72</div>
+            </div>
+          </article>
+          <article class="card">
+            <img
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Herbs%20Garden%2C%20St.%20Michael%20the%20Archangel%20Monastery.JPG?width=640"
+              alt="Canteiro de ervas e temperos"
               width="600"
               height="450"
               loading="lazy"
             />
             <div class="card-body">
               <h3>Caixote Horta</h3>
-              <p>Manjericão, salsa e tomilho prontos para colher.</p>
+              <p>Ervas aromáticas e temperos — inspiração para sua horta.</p>
               <div class="price">R$ 156</div>
             </div>
           </article>
           <article class="card">
             <img
-              src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80"
-              alt="Orquídea branca em vaso"
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Phalaenopsis%20orchid.jpg?width=640"
+              alt="Orquídea Phalaenopsis"
               width="600"
               height="450"
               loading="lazy"
@@ -452,6 +588,192 @@
               <h3>Orquídea Phalaenopsis</h3>
               <p>Flor branca premium com cachepô de fibra natural.</p>
               <div class="price">R$ 248</div>
+            </div>
+          </article>
+          <article class="card">
+            <img
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Sunflower%20field%20-%20panoramio%20(11).jpg?width=640"
+              alt="Campo de girassóis"
+              width="600"
+              height="450"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Box Girassol</h3>
+              <p>Arranjo rústico com girassóis da estação.</p>
+              <div class="price">R$ 142</div>
+            </div>
+          </article>
+          <article class="card">
+            <img
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Tulip%20Bouquet%20(141139731).jpeg?width=640"
+              alt="Buquê de tulipas"
+              width="600"
+              height="450"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Buquê Holanda</h3>
+              <p>Tulipas coloridas, laço de juta.</p>
+              <div class="price">R$ 168</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="interior" class="section-tint">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Plantas de interior</h2>
+          <span class="badge">Pouca luz</span>
+        </div>
+        <div class="products">
+          <article class="card">
+            <img
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Monstera%20deliciosa%20001.jpg?width=640"
+              alt="Monstera deliciosa em vaso"
+              width="600"
+              height="450"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Monstera GG</h3>
+              <p>Folhas recortadas, vaso 25 cm — statement na sala.</p>
+              <div class="price">R$ 198</div>
+            </div>
+          </article>
+          <article class="card">
+            <img
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Small%20echeveria%20D2104.jpg?width=640"
+              alt="Echevéria em vaso pequeno"
+              width="600"
+              height="450"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Echevéria Mini</h3>
+              <p>Linha compacta para escrivaninha e estante.</p>
+              <div class="price">R$ 38</div>
+            </div>
+          </article>
+          <article class="card">
+            <img
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Planta%20cacto%20Echinopsis%20eyriesii.JPG?width=640"
+              alt="Cacto em flor em vaso"
+              width="600"
+              height="450"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Cacto Florido</h3>
+              <p>Echinopsis com floração vibrante — sol direto.</p>
+              <div class="price">R$ 64</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="presentes">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Arranjos &amp; presentes</h2>
+        </div>
+        <div class="products">
+          <article class="card">
+            <img
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Tulip%20Bouquet%20(141139731).jpeg?width=640"
+              alt="Buquê de tulipas para presente"
+              width="600"
+              height="450"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Presente Tulipa</h3>
+              <p>Embalagem premium, cartão incluso (demo).</p>
+              <div class="price">R$ 175</div>
+            </div>
+          </article>
+          <article class="card">
+            <img
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Rose%20and%20carnation%20flower%20bouquet%2001.jpg?width=640"
+              alt="Buquê romântico"
+              width="600"
+              height="450"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Combo Romântico</h3>
+              <p>Rosas e cravos + vela aromática (fictício).</p>
+              <div class="price">R$ 229</div>
+            </div>
+          </article>
+          <article class="card">
+            <img
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Wildflower%20field%20Pflugerville%20Texas%202025.jpg?width=640"
+              alt="Campo de flores silvestres"
+              width="600"
+              height="450"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Mix Campestre</h3>
+              <p>Arranjo descontraído, estilo prado florido.</p>
+              <div class="price">R$ 119</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="vasos" class="section-tint">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Vasos &amp; cuidados</h2>
+          <span class="badge">Acessórios</span>
+        </div>
+        <div class="products">
+          <article class="card">
+            <img
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Terraccotta%20Flower%20Pot.jpg?width=640"
+              alt="Vaso de barro para plantas"
+              width="600"
+              height="450"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Vaso Terracota 24 cm</h3>
+              <p>Drenagem natural, acabamento fosco — clássico para varanda.</p>
+              <div class="price">R$ 42</div>
+            </div>
+          </article>
+          <article class="card">
+            <img
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Hanging%20terracotta%20flower%20pots%20with%20succulents%20Arta%20Mallorca.jpg?width=640"
+              alt="Vasos suspensos com suculentas"
+              width="600"
+              height="450"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Conjunto Pendente</h3>
+              <p>Três vasos em cascata com suculentas (arranjo fictício).</p>
+              <div class="price">R$ 118</div>
+            </div>
+          </article>
+          <article class="card">
+            <img
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Watering%20plants.jpg?width=640"
+              alt="Regador regando plantas"
+              width="600"
+              height="450"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Kit Rega Consciente</h3>
+              <p>Regador 3L + medidor de umidade de solo (demo).</p>
+              <div class="price">R$ 89</div>
             </div>
           </article>
         </div>
@@ -474,11 +796,27 @@
         <div class="section-head">
           <h2>Kits para começar</h2>
         </div>
-        <div class="kits-single">
+        <div class="grid-2">
           <article class="card">
             <img
-              src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=800&q=80"
-              alt="Gramado e flores silvestres"
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Gardening_tools.jpg?width=800"
+              alt="Ferramentas de jardinagem e vasos"
+              width="800"
+              height="500"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Kit Iniciante</h3>
+              <p>
+                Pá, regador 2L, substrato universal e 3 vasos — ideal para apartamento.
+              </p>
+              <div class="price">R$ 134</div>
+            </div>
+          </article>
+          <article class="card">
+            <img
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Wildflower%20field%20Pflugerville%20Texas%202025.jpg?width=800"
+              alt="Campo de flores silvestres"
               width="800"
               height="500"
               loading="lazy"
@@ -561,13 +899,17 @@
         <div>
           <div class="logo" style="color: #fff">Flor &amp; <span style="color: #95d5b2">Jardim</span></div>
           <p style="margin: 0.75rem 0 0; font-size: 0.9rem; max-width: 36ch; opacity: 0.9">
-            Página de vitrine estática para demonstração. Imagens Unsplash (rede externa).
+            Página de vitrine estática para demonstração. Imagens via Wikimedia Commons.
           </p>
         </div>
         <div>
           <h4>Loja</h4>
           <ul>
+            <li><a href="#em-destaque">Em destaque</a></li>
             <li><a href="#destaques">Flores</a></li>
+            <li><a href="#interior">Interior</a></li>
+            <li><a href="#presentes">Presentes</a></li>
+            <li><a href="#vasos">Vasos</a></li>
             <li><a href="#kits">Jardim</a></li>
             <li><a href="#contato">Suporte</a></li>
           </ul>
