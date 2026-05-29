@@ -34,19 +34,24 @@ export async function GET(request: Request) {
     normalizeHttpOrigin(embedOrigin),
   );
 
+  const requestOriginHeader = request.headers.get("origin");
+
   if (!widgetKey) {
-    return withCors(jsonError(400, "BAD_REQUEST", "Chave obrigatória"), origin);
+    return withCors(
+      jsonError(400, "BAD_REQUEST", "Chave obrigatória"),
+      requestOriginHeader,
+    );
   }
 
   const ctx = await resolveWidgetKey(widgetKey);
   if (!ctx) {
-    return withCors(jsonError(401, "INVALID_KEY", "Chave inválida"), origin);
+    return withCors(jsonError(401, "INVALID_KEY", "Chave inválida"), requestOriginHeader);
   }
 
   if (!isOriginAllowed(origin, ctx.allowedOrigins)) {
     return withCors(
       jsonError(403, "ORIGIN_DENIED", "Origem não autorizada"),
-      origin,
+      requestOriginHeader,
     );
   }
 
@@ -60,7 +65,7 @@ export async function GET(request: Request) {
       primaryColor: config?.widgetPrimaryColor ?? "#2563eb",
     },
     {
-      headers: publicCorsHeaders(origin),
+      headers: publicCorsHeaders(requestOriginHeader),
     },
   );
 }

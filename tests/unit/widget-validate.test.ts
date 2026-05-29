@@ -2,8 +2,29 @@ import { describe, expect, it } from "vitest";
 import {
   isOriginAllowed,
   normalizeHttpOrigin,
+  publicCorsHeaders,
   resolveRequestOrigin,
 } from "@/lib/widget/validate";
+
+describe("publicCorsHeaders", () => {
+  it("echoes opaque origin as literal null", () => {
+    expect(publicCorsHeaders("null")).toEqual({
+      "Access-Control-Allow-Origin": "null",
+    });
+  });
+
+  it("echoes normal https origin", () => {
+    expect(publicCorsHeaders("https://www.fronteditor.dev")).toEqual({
+      "Access-Control-Allow-Origin": "https://www.fronteditor.dev",
+    });
+  });
+
+  it("uses wildcard when Origin header absent", () => {
+    expect(publicCorsHeaders(null)).toEqual({
+      "Access-Control-Allow-Origin": "*",
+    });
+  });
+});
 
 describe("normalizeHttpOrigin", () => {
   it("rejects opaque null origin string", () => {

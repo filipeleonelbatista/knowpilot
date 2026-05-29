@@ -50,18 +50,20 @@ export async function POST(request: Request) {
     normalizeHttpOrigin(body.embedOrigin) ?? null,
   );
 
+  const requestOriginHeader = request.headers.get("origin");
+
   const ctx = await resolveWidgetKey(body.widgetKey);
   if (!ctx) {
     return withCors(
       jsonError(401, "INVALID_KEY", "Chave do widget inválida"),
-      origin,
+      requestOriginHeader,
     );
   }
 
   if (!isOriginAllowed(origin, ctx.allowedOrigins)) {
     return withCors(
       jsonError(403, "ORIGIN_DENIED", "Origem não autorizada"),
-      origin,
+      requestOriginHeader,
     );
   }
 
@@ -74,7 +76,7 @@ export async function POST(request: Request) {
         "Sistema sobrecarregado. Tente em 2–3 minutos.",
         { upgradeUrl: "/upgrade" },
       ),
-      origin,
+      requestOriginHeader,
     );
   }
 
@@ -143,21 +145,16 @@ export async function POST(request: Request) {
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache",
       Connection: "keep-alive",
-      ...publicCorsHeaders(origin),
+      ...publicCorsHeaders(requestOriginHeader),
     },
   });
 }
 
 export async function OPTIONS(request: Request) {
-  const origin = resolveRequestOrigin(
-    request.headers.get("origin"),
-    request.headers.get("referer"),
-    null,
-  );
   return new Response(null, {
     status: 204,
     headers: {
-      ...publicCorsHeaders(origin),
+      ...publicCorsHeaders(request.headers.get("origin")),
       "Access-Control-Allow-Methods": "POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
     },

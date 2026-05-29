@@ -76,9 +76,19 @@ export function isOriginAllowed(
   });
 }
 
-export function publicCorsHeaders(origin: string | null): Record<string, string> {
-  const allowOrigin = origin && origin !== "null" ? origin : "*";
-  return { "Access-Control-Allow-Origin": allowOrigin };
+/**
+ * CORS: `Access-Control-Allow-Origin` must echo the request's `Origin` header.
+ * Opaque / sandboxed pages send `Origin: null`; the response must use the literal `null`,
+ * not the logical site URL from embedOrigin (or the browser blocks the body on 200).
+ */
+export function publicCorsHeaders(originHeader: string | null): Record<string, string> {
+  if (originHeader == null) {
+    return { "Access-Control-Allow-Origin": "*" };
+  }
+  const t = originHeader.trim();
+  if (t === "") return { "Access-Control-Allow-Origin": "*" };
+  if (t === "null") return { "Access-Control-Allow-Origin": "null" };
+  return { "Access-Control-Allow-Origin": t };
 }
 
 export async function resolveWidgetKey(
