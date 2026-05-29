@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Flor &amp; Jardim — Plantas e arranjos para sua casa</title>
+    <meta
+      name="description"
+      content="Loja demo de flores e jardim. Use esta página no GitHub Pages para testar o widget Knowpilot."
+    />
+    <style>
+      :root {
+        --bg: #f7faf5;
+        --card: #ffffff;
+        --ink: #1a2e1a;
+        --muted: #4a5d4a;
+        --accent: #2d6a4f;
+        --accent-light: #40916c;
+        --bloom: #e07a5f;
+        --border: #d8e6d8;
+        --shadow: 0 12px 40px rgba(45, 106, 79, 0.12);
+        --radius: 14px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        line-height: 1.55;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .wrap {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 0 1.25rem;
+      }
+      header {
+        background: var(--card);
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.85rem 0;
+        flex-wrap: wrap;
+      }
+      .logo {
+        font-weight: 800;
+        font-size: 1.15rem;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+      }
+      .logo span {
+        color: var(--accent);
+      }
+      nav {
+        display: flex;
+        gap: 1.25rem;
+        flex-wrap: wrap;
+        font-size: 0.95rem;
+      }
+      nav a {
+        color: var(--muted);
+        font-weight: 500;
+      }
+      .badge {
+        display: inline-block;
+        background: #e8f5e9;
+        color: var(--accent);
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0.2rem 0.55rem;
+        border-radius: 999px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .hero {
+        padding: 3rem 0 3.5rem;
+        background: linear-gradient(135deg, #e8f5e9 0%, #f7faf5 45%, #fff5f2 100%);
+      }
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2.5rem;
+        align-items: center;
+      }
+      @media (max-width: 860px) {
+        .hero-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .hero h1 {
+        font-size: clamp(2rem, 4vw, 2.75rem);
+        line-height: 1.15;
+        margin: 0.5rem 0 1rem;
+        letter-spacing: -0.03em;
+      }
+      .hero p {
+        color: var(--muted);
+        font-size: 1.05rem;
+        max-width: 34ch;
+        margin: 0 0 1.5rem;
+      }
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.7rem 1.35rem;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+      .btn:active {
+        transform: scale(0.98);
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+        box-shadow: 0 4px 16px rgba(45, 106, 79, 0.35);
+      }
+      .btn-primary:hover {
+        background: var(--accent-light);
+      }
+      .btn-ghost {
+        background: #fff;
+        color: var(--accent);
+        border: 2px solid var(--border);
+      }
+      .hero-visual {
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        aspect-ratio: 4 / 3;
+        background: #ddd;
+      }
+      .hero-visual img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      section {
+        padding: 2.75rem 0;
+      }
+      .section-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+      }
+      .section-head h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        letter-spacing: -0.02em;
+      }
+      .products {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 1.25rem;
+      }
+      .card {
+        background: var(--card);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        transition: box-shadow 0.2s ease, transform 0.2s ease;
+      }
+      .card:hover {
+        box-shadow: var(--shadow);
+        transform: translateY(-3px);
+      }
+      .card img {
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+        display: block;
+      }
+      .card-body {
+        padding: 1rem 1.1rem 1.15rem;
+      }
+      .card-body h3 {
+        margin: 0 0 0.35rem;
+        font-size: 1.05rem;
+      }
+      .card-body p {
+        margin: 0;
+        font-size: 0.88rem;
+        color: var(--muted);
+      }
+      .price {
+        margin-top: 0.65rem;
+        font-weight: 800;
+        color: var(--bloom);
+        font-size: 1.1rem;
+      }
+      .banner {
+        margin: 2rem 0;
+        padding: 2rem 1.5rem;
+        border-radius: var(--radius);
+        background: linear-gradient(120deg, var(--accent) 0%, #1b4332 100%);
+        color: #ecfdf5;
+        text-align: center;
+      }
+      .banner h2 {
+        margin: 0 0 0.5rem;
+        font-size: 1.45rem;
+      }
+      .banner p {
+        margin: 0 auto 1.25rem;
+        max-width: 42ch;
+        opacity: 0.95;
+      }
+      .banner .btn {
+        background: #fff;
+        color: var(--accent);
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        align-items: start;
+      }
+      @media (max-width: 720px) {
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+      .note {
+        background: #fffbeb;
+        border: 1px solid #fcd34d;
+        border-radius: var(--radius);
+        padding: 1rem 1.15rem;
+        font-size: 0.9rem;
+        color: #78350f;
+      }
+      .note code {
+        background: rgba(0, 0, 0, 0.06);
+        padding: 0.1rem 0.35rem;
+        border-radius: 4px;
+        font-size: 0.82rem;
+      }
+      footer {
+        background: #1b4332;
+        color: #d8f3dc;
+        padding: 2.5rem 0 2rem;
+        margin-top: 2rem;
+      }
+      footer .wrap {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 2rem;
+      }
+      @media (max-width: 720px) {
+        footer .wrap {
+          grid-template-columns: 1fr;
+        }
+      }
+      footer h4 {
+        margin: 0 0 0.75rem;
+        color: #fff;
+        font-size: 0.95rem;
+      }
+      footer ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 0.9rem;
+      }
+      footer li {
+        margin-bottom: 0.45rem;
+      }
+      footer a {
+        color: #b7e4c7;
+      }
+      .fine {
+        margin-top: 2rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        font-size: 0.8rem;
+        opacity: 0.75;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap topbar">
+        <div class="logo">Flor &amp; <span>Jardim</span></div>
+        <nav aria-label="Principal">
+          <a href="#destaques">Destaques</a>
+          <a href="#kits">Kits</a>
+          <a href="#dicas">Dicas</a>
+          <a href="#contato">Contato</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <span class="badge">Entrega na região</span>
+          <h1>Flores frescas e plantas para transformar seu espaço</h1>
+          <p>
+            Arranjos sob medida, mudas de interior e tudo para o seu cantinho verde — com
+            atendimento que responde no chat (widget de teste ao final da página).
+          </p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="#destaques">Ver vitrine</a>
+            <a class="btn btn-ghost" href="#kits">Montar kit jardim</a>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <img
+            src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=900&q=80"
+            alt="Vaso com flores coloridas em ambiente claro"
+            width="900"
+            height="675"
+            loading="eager"
+          />
+        </div>
+      </div>
+    </section>
+
+    <section id="destaques">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Destaques da semana</h2>
+          <span class="badge">Novidades</span>
+        </div>
+        <div class="products">
+          <article class="card">
+            <img
+              src="https://images.unsplash.com/photo-1455659817273-f96807779a38?w=600&q=80"
+              alt="Buquê de rosas em tons pastel"
+              width="600"
+              height="450"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Buquê Aurora</h3>
+              <p>Rosas e astromélias em tons suaves, embrulho kraft.</p>
+              <div class="price">R$ 189</div>
+            </div>
+          </article>
+          <article class="card">
+            <img
+              src="https://images.unsplash.com/photo-1463936575829-25148e1db1d8?w=600&q=80"
+              alt="Suculentas em vasos de cerâmica"
+              width="600"
+              height="450"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Trio Suculenta</h3>
+              <p>Três espécies em vasos cerâmicos — pouca manutenção.</p>
+              <div class="price">R$ 72</div>
+            </div>
+          </article>
+          <article class="card">
+            <img
+              src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80"
+              alt="Horta em caixote de madeira"
+              width="600"
+              height="450"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Caixote Horta</h3>
+              <p>Manjericão, salsa e tomilho prontos para colher.</p>
+              <div class="price">R$ 156</div>
+            </div>
+          </article>
+          <article class="card">
+            <img
+              src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80"
+              alt="Orquídea branca em vaso"
+              width="600"
+              height="450"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Orquídea Phalaenopsis</h3>
+              <p>Flor branca premium com cachepô de fibra natural.</p>
+              <div class="price">R$ 248</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <div class="banner">
+        <h2>Assinatura “Jardim na varanda”</h2>
+        <p>
+          Todo mês uma seleção de mudas e flores de estação, com guia de cuidados. Página
+          estática de demonstração — sem checkout real.
+        </p>
+        <button type="button" class="btn">Quero saber mais</button>
+      </div>
+    </div>
+
+    <section id="kits">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Kits para começar</h2>
+        </div>
+        <div class="grid-2">
+          <article class="card">
+            <img
+              src="https://images.unsplash.com/photo-1592150621554-9b663cb1cdd9?w=800&q=80"
+              alt="Ferramentas de jardinagem e vasos"
+              width="800"
+              height="500"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Kit Iniciante</h3>
+              <p>
+                Pá, regador 2L, substrato universal e 3 vasos — ideal para apartamento.
+              </p>
+              <div class="price">R$ 134</div>
+            </div>
+          </article>
+          <article class="card">
+            <img
+              src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=800&q=80"
+              alt="Gramado e flores silvestres"
+              width="800"
+              height="500"
+              loading="lazy"
+            />
+            <div class="card-body">
+              <h3>Kit Jardim externo</h3>
+              <p>
+                Mix de sementes para flores nativas, adubo orgânico e mangueira leve 15m.
+              </p>
+              <div class="price">R$ 198</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="dicas">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Widget de teste (Knowpilot)</h2>
+        </div>
+        <div class="note">
+          <strong>GitHub Pages:</strong> depois de publicar, copie a URL exata do site (ex.
+          <code>https://seuusuario.github.io/nome-do-repo/</code> — em sites de projeto o
+          origin é só <code>https://seuusuario.github.io</code>) e cadastre-a nos
+          <strong>domínios permitidos</strong> da chave do widget no painel Knowpilot.
+          Ajuste os três atributos do <code>&lt;script&gt;</code> abaixo antes do deploy.
+        </div>
+      </div>
+    </section>
+
+    <section id="contato">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Contato</h2>
+        </div>
+        <p style="color: var(--muted); max-width: 52ch">
+          Demo estática — use o botão de chat (canto da tela) após configurar o widget.
+          Horário fictício: seg–sáb, 9h–18h.
+        </p>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">
+        <div>
+          <div class="logo" style="color: #fff">Flor &amp; <span style="color: #95d5b2">Jardim</span></div>
+          <p style="margin: 0.75rem 0 0; font-size: 0.9rem; max-width: 36ch; opacity: 0.9">
+            Página de vitrine para testes no GitHub Pages. Imagens Unsplash (rede externa).
+          </p>
+        </div>
+        <div>
+          <h4>Loja</h4>
+          <ul>
+            <li><a href="#destaques">Flores</a></li>
+            <li><a href="#kits">Jardim</a></li>
+            <li><a href="#dicas">Suporte</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Política demo</a></li>
+            <li><a href="#">Termos demo</a></li>
+          </ul>
+        </div>
+        <p class="fine" style="grid-column: 1 / -1">
+          © 2026 Flor &amp; Jardim — página estática de demonstração.
+        </p>
+      </div>
+    </footer>
+
+    <!--
+      WIDGET KNOWPILOT — edite antes de publicar:
+      1) src = URL pública da sua app (ex. ngrok ou domínio final) + /widget/v1.js
+      2) data-widget-key = chave pública gerada no painel (Org → Widget nos sites)
+      3) data-embed-origin = URL exata da origem desta página no GitHub Pages
+         (ex.: https://usuario.github.io ou https://usuario.github.io/repo/)
+         Deve estar na lista de domínios permitidos da chave.
+    -->
+    <script
+      src="https://SEU_DOMINIO_KNOWPILOT/widget/v1.js"
+      data-widget-key="wk_SUBSTITUA_SUA_CHAVE"
+      data-embed-origin="https://SEU_USUARIO.github.io"
+      async
+    ></script>
+  </body>
+</html>
