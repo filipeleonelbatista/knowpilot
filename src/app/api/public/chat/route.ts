@@ -150,13 +150,16 @@ export async function POST(request: Request) {
   });
 }
 
+const WIDGET_CORS_ALLOW_HEADERS =
+  "Content-Type, ngrok-skip-browser-warning";
+
 export async function OPTIONS(request: Request) {
   return new Response(null, {
     status: 204,
     headers: {
       ...publicCorsHeaders(request.headers.get("origin")),
       "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Headers": WIDGET_CORS_ALLOW_HEADERS,
     },
   });
 }

@@ -69,3 +69,16 @@ export async function GET(request: Request) {
     },
   );
 }
+
+/** Preflight: GET with `ngrok-skip-browser-warning` is not a “simple” request. */
+export async function OPTIONS(request: Request) {
+  return new Response(null, {
+    status: 204,
+    headers: {
+      ...publicCorsHeaders(request.headers.get("origin")),
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers":
+        "Content-Type, ngrok-skip-browser-warning",
+    },
+  });
+}
